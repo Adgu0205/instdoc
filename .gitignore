@@ -1,0 +1,14 @@
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+backend/venv/
+backend/uploads/
+backend/.env
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
