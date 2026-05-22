@@ -2,7 +2,7 @@
 
 This repository contains Veritas Ledger: a web app that analyzes legal contracts and highlights risky or missing clauses. Below is a simple, plain-language description of what the project does, the exact features it includes, the technologies it uses, and how to run it locally.
 
-## What this project does (simple language)
+## What this project does 
 
 - Accepts documents (PDF, DOCX) or pasted text and extracts the contract text.
 - Runs a hybrid risk analysis: a fast keyword-based scanner plus optional AI analysis (Gemini) for deeper understanding.
@@ -11,7 +11,7 @@ This repository contains Veritas Ledger: a web app that analyzes legal contracts
 - Provides a visual dashboard with: risk heatmap, clause list, missing clause highlights, scam/predatory signals, and scenario simulations for exit/penalty outcomes.
 - Keeps simple anonymized usage statistics (total audits, average risk score, top document types).
 
-## Exact features (what's implemented in the code)
+## Exact features (what's implemented)
 
 - File upload endpoint for PDF/DOCX/TXT (`/api/analyze/file`).
 - Text submission endpoint for pasted content (`/api/analyze/text`).
@@ -24,7 +24,7 @@ This repository contains Veritas Ledger: a web app that analyzes legal contracts
 - Retry support for failed submissions (frontend stores last submission and retries).
 - Friendly offline fallback: if no Gemini key is configured, the app still runs with keyword analysis.
 
-## Tech stack (exact libraries and frameworks)
+## Tech stack 
 
 Backend
 
@@ -48,7 +48,7 @@ Other
 
 - Uses simple JSON files / in-memory stores for cache and small analytics in this repo.
 
-## Where to find important code (brief)
+## Where to find important code 
 
 - Backend API routes: `backend/app/routes/analyze.py`
 - Parsers: `backend/app/parsers/pdf.py`, `backend/app/parsers/docx.py`, `backend/app/parsers/txt.py`
