@@ -145,20 +145,32 @@ def analyze_contract_with_gemini(text: str, deterministic: Dict[str, Any]) -> Di
     """
     Sends the contract to Gemini with structured prompt parameters and instructions.
     Uses the official google-generativeai SDK and requires GEMINI_API_KEY.
+    Optimizes performance by checking local cache and using large chunk sizes to minimize API calls.
     """
+    import time
+    from app.services.cache_service import get_cached_analysis, cache_analysis
+    from app.utils.logger import log_ai_failure, log_processing_time
+    
+    # 1. Check local SHA-256 Cache
+    cached_result = get_cached_analysis(text)
+    if cached_result:
+        return cached_result
+
     api_key = os.getenv("GEMINI_API_KEY")
     
     if not api_key:
         logger.warning("GEMINI_API_KEY is missing. Running fallback deterministic engine.")
-        return get_fallback_analysis(
+        fallback = get_fallback_analysis(
             text, 
             deterministic, 
             "Running in offline mode. Please set GEMINI_API_KEY in backend/.env for AI analysis."
         )
+        return fallback
 
+    start_time = time.time()
     try:
         genai.configure(api_key=api_key)
-        # Use gemini-2.5-flash as requested
+        # Use gemini-2.5-flash
         model = genai.GenerativeModel("gemini-2.5-flash")
         
         # Prepare deterministic matches to pass to Gemini
@@ -171,17 +183,16 @@ def analyze_contract_with_gemini(text: str, deterministic: Dict[str, Any]) -> Di
                 "reasoning": match["explanation"]
             })
             
-        # Handle chunking if document is massive
-        chunks = chunk_text(text)
+        # 2. Optimize Chunking: Only chunk if document is exceptionally large (> 150,000 characters)
+        chunks = chunk_text(text, max_chars=150000)
         
         if len(chunks) > 1:
-            logger.info(f"Contract is large ({len(text)} characters). Splitting into {len(chunks)} chunks.")
-            # If the contract is chunked, we analyze the first few parts or the full set, 
-            # and ask Gemini to merge. For performance, let's analyze up to 3 chunks to prevent
-            # massive delays, or summarize. In most production SaaS, we run a map-reduce.
-            # Let's write a map-reduce pipeline.
+            # If indeed larger than 150k, split into standard 80k chunks to preserve memory/API limit
+            chunks = chunk_text(text, max_chars=80000)
+            logger.info(f"Contract is exceptionally large ({len(text)} characters). Splitting into {len(chunks)} chunks.")
+            
             chunk_results = []
-            for i, chunk in enumerate(chunks[:4]): # Limit to 4 chunks (approx 120,000 characters) to avoid timeout
+            for i, chunk in enumerate(chunks[:4]): # Limit to 4 chunks (approx 320k characters) to avoid timeout
                 chunk_prompt = f"""
                 You are analyzing Part {i+1} of a multi-part legal contract.
                 Identify risks, missing clauses, and scam signals in this part of the text.
@@ -260,7 +271,7 @@ def analyze_contract_with_gemini(text: str, deterministic: Dict[str, Any]) -> Di
                 merge_prompt,
                 generation_config={"response_mime_type": "application/json"}
             )
-            return json.loads(merge_resp.text)
+            final_result = json.loads(merge_resp.text)
             
         else:
             # Single chunk analysis
@@ -337,11 +348,17 @@ def analyze_contract_with_gemini(text: str, deterministic: Dict[str, Any]) -> Di
                 prompt,
                 generation_config={"response_mime_type": "application/json"}
             )
-            
-            return json.loads(response.text)
+            final_result = json.loads(response.text)
+
+        # 3. Log success metrics and save to cache
+        duration = time.time() - start_time
+        log_processing_time("gemini_ai_analysis", duration, {"text_length_chars": len(text)})
+        cache_analysis(text, final_result)
+        return final_result
 
     except Exception as e:
-        logger.error(f"Gemini API analysis failed: {str(e)}")
+        duration = time.time() - start_time
+        log_ai_failure(str(e), duration)
         return get_fallback_analysis(
             text, 
             deterministic, 

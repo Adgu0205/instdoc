@@ -1,33 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { Upload, FileText, ClipboardList, AlertCircle, RefreshCw } from 'lucide-react';
-import { analyzeFile, analyzeText } from '../services/api';
+import { Upload, FileText, ClipboardList } from 'lucide-react';
 
-export default function UploadZone({ onAnalysisComplete, onError }) {
+export default function UploadZone({ onFileSelected, onTextSubmitted }) {
   const [activeTab, setActiveTab] = useState('upload'); // 'upload' | 'paste'
   const [dragActive, setDragActive] = useState(false);
   const [pastedText, setPastedText] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [loadingStage, setLoadingStage] = useState('');
   const fileInputRef = useRef(null);
-
-  const loadingStages = [
-    'Initializing secure document sandbox...',
-    'Extracting semantic text layout...',
-    'Running deterministic keyword scoring...',
-    'Invoking Gemini 2.5 Flash analysis...',
-    'Structuring risk profiles and simulations...',
-    'Validating final legal safety audit...'
-  ];
-
-  const cycleLoadingStages = () => {
-    let index = 0;
-    setLoadingStage(loadingStages[0]);
-    const interval = setInterval(() => {
-      index = (index + 1) % loadingStages.length;
-      setLoadingStage(loadingStages[index]);
-    }, 2800);
-    return interval;
-  };
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -39,50 +17,33 @@ export default function UploadZone({ onAnalysisComplete, onError }) {
     }
   };
 
-  const handleDrop = async (e) => {
+  const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
     
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      await processFile(e.dataTransfer.files[0]);
+      processFile(e.dataTransfer.files[0]);
     }
   };
 
-  const handleFileChange = async (e) => {
+  const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      await processFile(e.target.files[0]);
+      processFile(e.target.files[0]);
     }
   };
 
-  const processFile = async (file) => {
-    setIsLoading(true);
-    const stageInterval = cycleLoadingStages();
-    try {
-      const data = await analyzeFile(file);
-      onAnalysisComplete(data);
-    } catch (err) {
-      onError(err.message || 'An error occurred while uploading and parsing your file.');
-    } finally {
-      clearInterval(stageInterval);
-      setIsLoading(false);
+  const processFile = (file) => {
+    if (onFileSelected) {
+      onFileSelected(file);
     }
   };
 
-  const handleTextSubmit = async (e) => {
+  const handleTextSubmit = (e) => {
     e.preventDefault();
     if (!pastedText.trim()) return;
-
-    setIsLoading(true);
-    const stageInterval = cycleLoadingStages();
-    try {
-      const data = await analyzeText(pastedText);
-      onAnalysisComplete(data);
-    } catch (err) {
-      onError(err.message || 'An error occurred while analyzing the contract text.');
-    } finally {
-      clearInterval(stageInterval);
-      setIsLoading(false);
+    if (onTextSubmitted) {
+      onTextSubmitted(pastedText);
     }
   };
 
@@ -182,30 +143,6 @@ export default function UploadZone({ onAnalysisComplete, onError }) {
             </button>
           </div>
         </form>
-      )}
-
-      {/* Loading Overlay */}
-      {isLoading && (
-        <div className="absolute inset-0 bg-cream/95 z-50 flex flex-col items-center justify-center p-8 transition-opacity duration-300">
-          <div className="relative mb-6">
-            <RefreshCw className="w-10 h-10 text-editorial-gold animate-spin" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-serif italic text-charcoal">
-              ⚖️
-            </div>
-          </div>
-          <h2 className="font-serif text-xl font-black text-ink mb-1 uppercase tracking-wider">
-            Auditing Ledger Clauses
-          </h2>
-          <p className="text-xs font-mono uppercase tracking-widest text-stone-500 animate-pulse">
-            {loadingStage}
-          </p>
-          <div className="w-48 h-0.5 bg-stone-200 overflow-hidden mt-4 relative">
-            <div className="w-1/2 h-full bg-editorial-gold absolute left-0 top-0 animate-[shimmer_1.5s_infinite]"></div>
-          </div>
-          <p className="mt-8 text-[11px] text-stone-400 max-w-xs text-center">
-            Parsing document structure, looking up commercial precedents, and generating risk heatmaps.
-          </p>
-        </div>
       )}
     </div>
   );

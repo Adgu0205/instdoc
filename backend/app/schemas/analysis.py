@@ -40,3 +40,7 @@ class AnalysisResponse(BaseModel):
     thingsToKnow: List[str] = Field(default=[], description="Exactly 5 key facts the signee must know.")
     deterministicMatches: Optional[List[Dict[str, Any]]] = Field(default=[], description="Underlying keyword engine matches.")
     apiWarning: Optional[str] = Field(None, description="System warnings, e.g., missing API keys.")
+
+class TaskStatusResponse(BaseModel):
+    taskId: str = Field(..., description="The unique ID of the background task.")
+    status: str = Field(..., description="The current status of the analysis: pending, processing, completed, failed.")
