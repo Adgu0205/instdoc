@@ -19,11 +19,11 @@ export default function ActionItems({ thingsToKnow = [] }) {
         <div className="flex items-center gap-2">
           <Bookmark className="w-5 h-5 text-editorial-gold" />
           <h3 className="font-serif font-black text-xl text-ink uppercase tracking-wide">
-            5 Things You Must Know Before Signing
+            Key Risk Findings & Takeaways
           </h3>
         </div>
         <p className="text-[11px] text-stone-500 uppercase tracking-widest mt-0.5">
-          Veritas Executive Editorial Briefing - Crucial Highlights
+          Critical highlights and action items before executing the contract
         </p>
       </div>
 
@@ -47,7 +47,7 @@ export default function ActionItems({ thingsToKnow = [] }) {
       <div className="mt-8 border border-dashed border-editorial-border bg-cream-light/30 p-4">
         <h4 className="font-serif font-bold text-xs uppercase tracking-wider text-ink flex items-center gap-1.5 mb-1.5">
           <FileText className="w-3.5 h-3.5 text-editorial-gold" />
-          Tactical Negotiation Policy
+          Negotiation Opportunities & Tactical Guidance
         </h4>
         <p className="text-[11px] text-stone-600 leading-relaxed">
           Always request edits in a redlined Word document (.docx). Cross out one-sided terms and reference our recommended counter-wordings directly. Cap all general indemnification and specify that disputes must go through a mutual discussion cure period (e.g., 30 days) before formal litigation or arbitration is initiated.

@@ -1,0 +1,9 @@
+{
+  "total_analyzed": 3,
+  "total_risk_score": 60,
+  "average_risk_score": 20.0,
+  "contract_types": {
+    "Non-Disclosure Agreement": 2,
+    "Service Contract": 1
+  }
+}

@@ -10,7 +10,7 @@ KEYWORD_RULES = [
         "score_impact": 25,
         "severity": "CRITICAL",
         "explanation": "Exposes you to potentially infinite financial damages. Commercial contracts should cap liability to a reasonable multiplier of fees.",
-        "suggestion": "Request a cap on liability, typically limited to the total fees paid under the contract or a specific insurance-backed limit."
+        "suggestion": "Why it matters: Unlimited liability exposes you to infinite financial damages for any breach. Suggested change: Consider requesting a cap on liability, typically limited to the total fees paid under the contract or a specific commercial limit. Example wording: 'Each party's total aggregate liability under this Agreement shall be limited to the total fees paid by the Client in the twelve (12) months preceding the claim.'"
     },
     {
         "id": "binding_arbitration",
@@ -19,7 +19,7 @@ KEYWORD_RULES = [
         "score_impact": 20,
         "severity": "HIGH",
         "explanation": "Bypasses the public court system in favor of private arbitration and waives your right to a trial by jury or class actions.",
-        "suggestion": "Ensure arbitration is mutual, located in a convenient jurisdiction, and contains carve-outs for injunctive relief or small claims."
+        "suggestion": "Why it matters: Binding arbitration waives your right to trial by jury and class actions. Suggested change: Consider requesting that the arbitration venue be mutual and convenient, costs shared equally, and small claims carved out. Example wording: 'Any dispute arising out of this Agreement shall be resolved by binding arbitration in [City, State] under the JAMS rules, with costs shared equally between the parties.'"
     },
     {
         "id": "non_compete",
@@ -28,7 +28,7 @@ KEYWORD_RULES = [
         "score_impact": 20,
         "severity": "HIGH",
         "explanation": "Restricts your ability to work for competitors or start a similar business after this agreement terminates.",
-        "suggestion": "Request removal of the non-compete. If not possible, limit its duration to less than 6 months and narrow the geographic/industry scope."
+        "suggestion": "Why it matters: Non-compete restrictions can prevent you from working in your field after the agreement ends. Suggested change: Consider requesting clarification to narrow the geographic and temporal scope, or limit duration to 6 months or less. Example wording: 'The Contractor shall not engage in a competing business within a 10-mile radius of the Client's office for a period of six (6) months following termination.'"
     },
     {
         "id": "indemnification",
@@ -37,7 +37,7 @@ KEYWORD_RULES = [
         "score_impact": 15,
         "severity": "HIGH",
         "explanation": "Requires you to pay the legal costs and damages incurred by the other party due to standard performance issues.",
-        "suggestion": "Make the indemnification mutual. Limit your indemnity to third-party claims arising solely from your gross negligence or breach."
+        "suggestion": "Why it matters: One-sided indemnification forces you to pay for the other party's legal liabilities and costs. Suggested change: Consider adding mutual obligations and limiting indemnity to third-party claims arising from gross negligence. Example wording: 'Each party shall indemnify and hold the other party harmless from third-party claims arising out of the indemnifying party's gross negligence or willful misconduct.'"
     },
     {
         "id": "automatic_renewal",
@@ -46,7 +46,7 @@ KEYWORD_RULES = [
         "score_impact": 15,
         "severity": "MEDIUM",
         "explanation": "The contract automatically extends itself unless cancelled in writing within a narrow window (e.g., 30-90 days before expiration).",
-        "suggestion": "Change the renewal clause to require mutual written agreement, or extend the termination notice window."
+        "suggestion": "Why it matters: Automatic renewal can lock you into another term before you can negotiate or review. Suggested change: Consider defining notice requirements or requiring mutual written consent to renew. Example wording: 'This Agreement shall renew for successive terms only upon the mutual written agreement of both parties at least thirty (30) days prior to the expiration of the current term.'"
     },
     {
         "id": "liquidated_damages",
@@ -55,7 +55,7 @@ KEYWORD_RULES = [
         "score_impact": 15,
         "severity": "HIGH",
         "explanation": "Establishes a fixed, pre-agreed penalty fee for breaches. These can be punitive and higher than actual damages.",
-        "suggestion": "Require that actual damages be proven in a dispute rather than relying on automatic predetermined penalties."
+        "suggestion": "Why it matters: Predetermined penalties can be punitive and disproportionate to actual harm. Suggested change: Consider requesting that any damages be proven in court rather than pre-agreed. Example wording: 'In the event of a breach, the non-breaching party shall be entitled to recover actual, proven damages incurred as a direct result of such breach.'"
     },
     {
         "id": "termination_convenience",
@@ -64,7 +64,7 @@ KEYWORD_RULES = [
         "score_impact": 10,
         "severity": "MEDIUM",
         "explanation": "Allows a party to walk away from the contract at any time for no reason, leading to high business instability.",
-        "suggestion": "Ensure the right is mutual, and request a notice period of at least 30 to 60 days to allow for transition."
+        "suggestion": "Why it matters: Unilateral termination for convenience can lead to sudden contract ends without recourse. Suggested change: Consider adding mutual obligations and ensuring a reasonable notice window. Example wording: 'Either party may terminate this Agreement for convenience upon sixty (60) days' prior written notice to the other party.'"
     },
     {
         "id": "ip_assignment",
@@ -73,7 +73,7 @@ KEYWORD_RULES = [
         "score_impact": 10,
         "severity": "MEDIUM",
         "explanation": "Transfers the ownership rights of all materials, inventions, or codes created during the engagement to the other party.",
-        "suggestion": "Retain ownership of pre-existing intellectual property and tools. Make sure IP transfer occurs only after full payment."
+        "suggestion": "Why it matters: Transferring all rights without carve-outs may cause you to lose ownership of your pre-existing tools or methods. Suggested change: Consider narrowing the scope to exclude pre-existing IP and conditioning transfer on full payment. Example wording: 'Upon receipt of full payment, Contractor hereby assigns to Client all right, title, and interest in deliverables created under this Agreement, excluding Contractor's pre-existing materials.'"
     },
     {
         "id": "late_penalties",
@@ -82,16 +82,16 @@ KEYWORD_RULES = [
         "score_impact": 10,
         "severity": "MEDIUM",
         "explanation": "Imposes heavy penalties or high annual interest rates for invoices that are paid late.",
-        "suggestion": "Negotiate a grace period of 10-15 business days after invoice delivery and cap interest at standard commercial rates (e.g. 1% monthly)."
+        "suggestion": "Why it matters: Immediate interest charges and late fees can accrue due to minor processing delays. Suggested change: Consider requesting a written notice and cure grace period before penalties apply. Example wording: 'Late payments shall bear interest at 1% per month starting fifteen (15) days after written notice from Contractor that payment is past due.'"
     },
     {
         "id": "governing_law",
         "pattern": r"(?i)governing\s+law\s+in|governed\s+by\s+and\s+construed\s+in\s+accordance\s+with|jurisdiction\s+of\s+the\s+courts\s+of",
         "name": "Governing Law / Jurisdiction",
         "score_impact": 5,
-        "severity": "LOW",
+        "severity": "NEUTRAL",
         "explanation": "Determines which state or country's laws govern the contract and where disputes must be filed.",
-        "suggestion": "Ensure governing law and jurisdiction are located in a convenient state or country to avoid travel and foreign legal costs."
+        "suggestion": "Why it matters: Choice of law dictates which state's statutes apply and where lawsuits must be brought, potentially increasing costs. Suggested change: Consider requesting clarification to specify a mutual or reasonable jurisdiction. Example wording: 'This Agreement shall be governed by and construed in accordance with the laws of [Your State], without regard to conflict of law principles.'"
     }
 ]
 
@@ -151,14 +151,14 @@ def run_hybrid_risk_engine(text: str) -> Dict[str, Any]:
     overall_score = min(99, base_score)
     
     # Map score to risk level
-    if overall_score < 25:
+    if overall_score <= 25:
         risk_level = "SAFE"
-    elif overall_score < 45:
+    elif overall_score <= 45:
         risk_level = "LOW RISK"
-    elif overall_score < 70:
+    elif overall_score <= 65:
         risk_level = "MODERATE RISK"
-    elif overall_score < 88:
-        risk_level = "RISKY"
+    elif overall_score <= 85:
+        risk_level = "HIGH RISK"
     else:
         risk_level = "DANGEROUS"
         

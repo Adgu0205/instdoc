@@ -201,23 +201,23 @@ function App() {
             <SkeletonDashboard stage={loadingStage} progress={progress} />
           ) : !analysisData ? (
             <div className="space-y-6 animate-[fadeIn_0.3s_ease-out]">
-              {/* Headline Article Intro */}
+              {/* Headline Intro */}
               <div className="max-w-4xl mx-auto text-center mt-8 space-y-3">
                 <span className="text-[10px] uppercase tracking-widest text-stone-500 font-mono font-bold bg-stone-100 px-3 py-1 border border-editorial-border">
-                  Daily Editorial Feature
+                  Legal Document Intelligence
                 </span>
                 <h2 className="font-serif font-black text-3xl md:text-5xl text-ink leading-tight">
-                  Demystifying one-sided contracts.
+                  Evidence-Based Contract Assessment & Auditing
                 </h2>
-                <p className="text-sm md:text-base text-stone-600 max-w-2xl mx-auto font-serif italic leading-relaxed">
-                  "Most agreements are drafted to shield the party that writes them. Veritas Ledger runs a hybrid scan to isolate hidden liabilities, flag missing protections, and translate legal jargon into plain-English negotiation redlines."
+                <p className="text-sm md:text-base text-stone-600 max-w-2xl mx-auto font-serif leading-relaxed">
+                  Analyze agreement structures to identify safeguards, standard procedural boilerplate, and risk exposure, translating complex legal terminology into actionable negotiation items.
                 </p>
 
-                {/* Circulation Stats Block */}
+                {/* Audit Stats Block */}
                 {stats && stats.total_analyzed > 0 && (
                   <div className="border-double border-4 border-editorial-border p-4 bg-paper max-w-md mx-auto mt-6 font-serif text-charcoal">
                     <h4 className="text-center font-black uppercase text-[10px] tracking-widest border-b border-editorial-border pb-1 mb-2.5">
-                      Ledger Circulation Summary
+                      Contract Audit Statistics
                     </h4>
                     <div className="grid grid-cols-3 gap-2 text-center items-center">
                       <div className="border-r border-editorial-border">
@@ -226,7 +226,7 @@ function App() {
                       </div>
                       <div className="border-r border-editorial-border">
                         <span className="block font-mono text-xl font-bold text-editorial-red">{stats.average_risk_score}%</span>
-                        <span className="text-[8px] uppercase tracking-widest text-stone-500 font-sans">Avg Risk Exposure</span>
+                        <span className="text-[8px] uppercase tracking-widest text-stone-500 font-sans">Avg Risk Score</span>
                       </div>
                       <div>
                         <span className="block font-sans font-bold text-[10px] uppercase tracking-wider truncate px-1 text-editorial-gold">
@@ -246,30 +246,30 @@ function App() {
                 onTextSubmitted={handleTextAnalysis}
               />
 
-              {/* Editorial bottom feature boxes */}
+              {/* Legal Features Column Grid */}
               <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 pt-12 border-t border-editorial-border">
                 <div className="space-y-1.5">
                   <h4 className="font-serif font-bold text-xs uppercase tracking-wider text-ink border-b border-editorial-border pb-1">
-                    01. Scan for Predatory Clauses
+                    01. Risk & Protective Clause Audit
                   </h4>
                   <p className="text-[11px] text-stone-500 leading-relaxed">
-                    Identify unlimited liabilities, automatic renewals, non-competes, and binding jury waivers. Review visual contract extracts.
+                    Verify the exact balance of favorable safeguards, standard procedural clauses, and one-sided liabilities.
                   </p>
                 </div>
                 <div className="space-y-1.5">
                   <h4 className="font-serif font-bold text-xs uppercase tracking-wider text-ink border-b border-editorial-border pb-1">
-                    02. Highlight Omissions
+                    02. Omission & Completeness Check
                   </h4>
                   <p className="text-[11px] text-stone-500 leading-relaxed">
-                    Contracts often harm you by what they leave out. Verify the absence of refund rights, payment grace periods, or mutual exit terms.
+                    Analyze the document's structure for missing protections like liability limits, payment cure windows, or termination rights.
                   </p>
                 </div>
                 <div className="space-y-1.5">
                   <h4 className="font-serif font-bold text-xs uppercase tracking-wider text-ink border-b border-editorial-border pb-1">
-                    03. Run Scenario Trials
+                    03. Scenario-Based Simulation
                   </h4>
                   <p className="text-[11px] text-stone-500 leading-relaxed">
-                    Forecast dispute outcomes using the consequence simulator. Predict liability under early exit terms or default notice windows.
+                    Model contract performance outcomes to predict financial and legal liabilities under scenarios like early exits or payment defaults.
                   </p>
                 </div>
               </div>

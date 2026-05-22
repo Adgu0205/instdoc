@@ -50,7 +50,7 @@ def extract_text_from_file_bytes(filename: str, file_bytes: bytes) -> str:
         )
 
 # Background Task Execution Pipelines
-async def run_file_analysis_pipeline(task_id: str, filename: str, file_bytes: bytes):
+async def run_file_analysis_pipeline(task_id: str, filename: str, file_bytes: bytes, gemini_key: Optional[str] = None):
     task = tasks[task_id]
     start_time = time.time()
     try:
@@ -61,20 +61,20 @@ async def run_file_analysis_pipeline(task_id: str, filename: str, file_bytes: by
         if not extracted_text.strip():
             raise ValueError("The document was successfully parsed but contains no text.")
             
-        await run_common_pipeline_stages(task, extracted_text, filename, start_time)
+        await run_common_pipeline_stages(task, extracted_text, filename, start_time, gemini_key)
     except Exception as e:
         log_parsing_failure(filename, str(e))
         task.fail(str(e))
 
-async def run_pipeline_with_parsed_text(task_id: str, extracted_text: str, filename: str):
+async def run_pipeline_with_parsed_text(task_id: str, extracted_text: str, filename: str, gemini_key: Optional[str] = None):
     task = tasks[task_id]
     start_time = time.time()
     try:
-        await run_common_pipeline_stages(task, extracted_text, filename, start_time)
+        await run_common_pipeline_stages(task, extracted_text, filename, start_time, gemini_key)
     except Exception as e:
         task.fail(str(e))
 
-async def run_text_analysis_pipeline(task_id: str, raw_text: str):
+async def run_text_analysis_pipeline(task_id: str, raw_text: str, gemini_key: Optional[str] = None):
     task = tasks[task_id]
     start_time = time.time()
     try:
@@ -86,18 +86,18 @@ async def run_text_analysis_pipeline(task_id: str, raw_text: str):
         if not cleaned_text.strip():
             raise ValueError("The input text is empty after sanitization.")
             
-        await run_common_pipeline_stages(task, cleaned_text, "Pasted_Text", start_time)
+        await run_common_pipeline_stages(task, cleaned_text, "Pasted_Text", start_time, gemini_key)
     except Exception as e:
         task.fail(str(e))
 
-async def run_common_pipeline_stages(task: Any, text: str, label: str, start_time: float):
+async def run_common_pipeline_stages(task: Any, text: str, label: str, start_time: float, gemini_key: Optional[str] = None):
     # Step 2: Risk Analysis
     task.update_stage("Risk Analysis", 45)
     deterministic_results = await asyncio.to_thread(run_hybrid_risk_engine, text)
     
     # Step 3: AI Processing
     task.update_stage("AI Processing", 70)
-    analysis = await asyncio.to_thread(analyze_contract_with_gemini, text, deterministic_results)
+    analysis = await asyncio.to_thread(analyze_contract_with_gemini, text, deterministic_results, gemini_key)
     
     # Step 4: Generating Report
     task.update_stage("Generating Report", 90)
@@ -138,6 +138,9 @@ async def analyze_file(
     file_bytes = await read_and_validate_file_size(file)
     log_upload(file.filename, file.content_type, len(file_bytes))
     
+    # Extract API Key from headers if present
+    gemini_key = request.headers.get("x-gemini-api-key")
+    
     # 3. Detect large files beforehand by metadata to run entirely in background
     is_large = len(file_bytes) > 500 * 1024  # > 500KB is large
     if not is_large and file.filename.lower().endswith(".pdf"):
@@ -152,7 +155,7 @@ async def analyze_file(
             
     if is_large:
         task_id = create_task()
-        background_tasks.add_task(run_file_analysis_pipeline, task_id, file.filename, file_bytes)
+        background_tasks.add_task(run_file_analysis_pipeline, task_id, file.filename, file_bytes, gemini_key)
         return TaskStatusResponse(taskId=task_id, status="pending")
 
     # 4. Standard small file path
@@ -167,14 +170,14 @@ async def analyze_file(
         # 5. Check if it's large in characters despite small file footprint
         if len(extracted_text) > LARGE_CONTRACT_THRESHOLD_CHARS:
             task_id = create_task()
-            background_tasks.add_task(run_pipeline_with_parsed_text, task_id, extracted_text, file.filename)
+            background_tasks.add_task(run_pipeline_with_parsed_text, task_id, extracted_text, file.filename, gemini_key)
             return TaskStatusResponse(taskId=task_id, status="pending")
             
         # Run hybrid risk engine (keyword deterministic analysis)
         deterministic_results = run_hybrid_risk_engine(extracted_text)
         
         # Call Gemini AI Service
-        analysis = analyze_contract_with_gemini(extracted_text, deterministic_results)
+        analysis = analyze_contract_with_gemini(extracted_text, deterministic_results, gemini_key)
         analysis["deterministicMatches"] = deterministic_results["matches"]
         
         # Populate response
@@ -217,10 +220,13 @@ async def analyze_text(
     # Enforce pasted text security limit
     validate_text_size(raw_text)
     
+    # Extract API Key from headers if present
+    gemini_key = request.headers.get("x-gemini-api-key")
+    
     # Check if text size justifies background execution
     if len(raw_text) > LARGE_CONTRACT_THRESHOLD_CHARS:
         task_id = create_task()
-        background_tasks.add_task(run_text_analysis_pipeline, task_id, raw_text)
+        background_tasks.add_task(run_text_analysis_pipeline, task_id, raw_text, gemini_key)
         return TaskStatusResponse(taskId=task_id, status="pending")
 
     start_time = time.time()
@@ -236,7 +242,7 @@ async def analyze_text(
         deterministic_results = run_hybrid_risk_engine(cleaned_text)
         
         # Call Gemini AI Service
-        analysis = analyze_contract_with_gemini(cleaned_text, deterministic_results)
+        analysis = analyze_contract_with_gemini(cleaned_text, deterministic_results, gemini_key)
         analysis["deterministicMatches"] = deterministic_results["matches"]
         
         resp_data = AnalysisResponse(**analysis)

@@ -8,8 +8,15 @@ export async function analyzeFile(file) {
   const formData = new FormData();
   formData.append('file', file);
 
+  const headers = {};
+  const customKey = localStorage.getItem('gemini_api_key');
+  if (customKey) {
+    headers['X-Gemini-API-Key'] = customKey;
+  }
+
   const response = await fetch(`${API_BASE_URL}/api/analyze/file`, {
     method: 'POST',
+    headers: headers,
     body: formData,
   });
 
@@ -62,6 +69,10 @@ export function analyzeFileWithProgress(file, onProgress) {
     };
 
     xhr.open('POST', `${API_BASE_URL}/api/analyze/file`);
+    const customKey = localStorage.getItem('gemini_api_key');
+    if (customKey) {
+      xhr.setRequestHeader('X-Gemini-API-Key', customKey);
+    }
     xhr.send(formData);
   });
 }
@@ -70,11 +81,17 @@ export function analyzeFileWithProgress(file, onProgress) {
  * Sends pasted contract text to the backend for risk analysis.
  */
 export async function analyzeText(text) {
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+  const customKey = localStorage.getItem('gemini_api_key');
+  if (customKey) {
+    headers['X-Gemini-API-Key'] = customKey;
+  }
+
   const response = await fetch(`${API_BASE_URL}/api/analyze/text`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: headers,
     body: JSON.stringify({ text }),
   });
 

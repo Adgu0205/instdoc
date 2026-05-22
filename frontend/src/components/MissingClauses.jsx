@@ -26,6 +26,18 @@ export default function MissingClauses({ missing = [] }) {
     }
   };
 
+  // Get border styles based on severity
+  const getSeverityBorder = (severity) => {
+    switch (severity?.toUpperCase()) {
+      case 'CRITICAL':
+      case 'HIGH':
+        return 'border-l-4 border-l-editorial-red';
+      case 'MEDIUM':
+      default:
+        return 'border-l-4 border-l-editorial-orange';
+    }
+  };
+
   return (
     <div className="border border-editorial-border bg-paper p-6 space-y-6">
       <div className="border-b border-editorial-border pb-4">
@@ -44,7 +56,9 @@ export default function MissingClauses({ missing = [] }) {
         {missing.map((clause, index) => (
           <div 
             key={index}
-            className={`border p-4 flex flex-col md:flex-row justify-between gap-6 ${getSeverityStyles(
+            className={`border p-4 flex flex-col md:flex-row justify-between gap-6 premium-hover ${getSeverityBorder(
+              clause.severity
+            )} ${getSeverityStyles(
               clause.severity
             )}`}
           >

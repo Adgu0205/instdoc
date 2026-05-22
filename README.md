@@ -1,168 +1,113 @@
-# Veritas Ledger: AI Legal Contract Intelligence Platform
+# Veritas Ledger — Simple Feature & Tech Summary
 
-Veritas Ledger is a premium, production-ready full-stack AI SaaS application that analyzes legal contracts (PDF, DOCX, TXT) and copy-pasted legal clauses. It uses a **Hybrid Risk Engine** combining deterministic keyword signatures with **Gemini 2.5 Flash** for natural language understanding and clause translation.
+This repository contains Veritas Ledger: a web app that analyzes legal contracts and highlights risky or missing clauses. Below is a simple, plain-language description of what the project does, the exact features it includes, the technologies it uses, and how to run it locally.
 
-The user interface is designed with a premium, elegant editorial aesthetic inspired by financial journals and legal publications, featuring cream backgrounds, serif typography, double-line borders, and clean, modular cards.
+## What this project does (simple language)
 
----
+- Accepts documents (PDF, DOCX) or pasted text and extracts the contract text.
+- Runs a hybrid risk analysis: a fast keyword-based scanner plus optional AI analysis (Gemini) for deeper understanding.
+- Returns a structured report with an overall risk score, flagged clauses, translated plain-English redlines, and suggested negotiation items.
+- Shows live progress during upload and background processing (Server-Sent Events).
+- Provides a visual dashboard with: risk heatmap, clause list, missing clause highlights, scam/predatory signals, and scenario simulations for exit/penalty outcomes.
+- Keeps simple anonymized usage statistics (total audits, average risk score, top document types).
 
-## Technical Stack
+## Exact features (what's implemented in the code)
 
-### Backend
+- File upload endpoint for PDF/DOCX/TXT (`/api/analyze/file`).
+- Text submission endpoint for pasted content (`/api/analyze/text`).
+- Background processing with task IDs and SSE progress events (`/api/analyze/stream/{taskId}`).
+- File metadata and content validation (allowed extensions, MIME checks, size limits).
+- Deterministic keyword risk engine (rule-based scoring).
+- Gemini AI integration for advanced clause translation and reasoning (used when `GEMINI_API_KEY` is set).
+- Caching of analysis results to avoid reprocessing identical inputs.
+- Simple in-memory analytics (total analyzed, average risk, contract type counts).
+- Retry support for failed submissions (frontend stores last submission and retries).
+- Friendly offline fallback: if no Gemini key is configured, the app still runs with keyword analysis.
 
-- **Core**: FastAPI, Uvicorn (Asynchronous API endpoints)
-- **Data Modeling & Validation**: Pydantic v2
-- **Document Parsers**: `pdfplumber` (PDF parsing), `python-docx` (Word parsing), Native Python (Plain text normalization)
-- **AI Engine**: Gemini 2.5 Flash (`google-generativeai` SDK)
+## Tech stack (exact libraries and frameworks)
 
-### Frontend
+Backend
 
-- **Framework**: React 18, Vite
-- **Styling**: TailwindCSS (Custom Editorial Palette)
-- **Icons**: Lucide React
-- **Animations**: Framer Motion
+- FastAPI (web framework)
+- Uvicorn (ASGI server)
+- Pydantic v2 (request/response models)
+- pdfplumber (PDF parsing)
+- python-docx (DOCX parsing)
+- google-generativeai (Gemini client)
+- slowapi (rate limiting)
 
----
+Frontend
 
-## Project Structure
+- React (via Vite)
+- Vite (dev server & build)
+- TailwindCSS (styling)
+- Lucide React (icons)
+- Framer Motion (animations)
 
-```
-instdoc/
-├── backend/
-│   ├── app/
-│   │   ├── routes/
-│   │   │   └── analyze.py      # /api/analyze/file and /api/analyze/text routes
-│   │   ├── services/
-│   │   │   ├── risk_engine.py  # Keyword scanner and score weights
-│   │   │   └── gemini_service.py # Gemini prompts, validation, chunking & merge logic
-│   │   ├── parsers/
-│   │   │   ├── txt.py          # Text encoder and sanitization
-│   │   │   ├── pdf.py          # PDF parser via pdfplumber
-│   │   │   └── docx.py         # DOCX parser via python-docx
-│   │   ├── schemas/
-│   │   │   └── analysis.py     # Pydantic request/response models
-│   │   ├── middleware/
-│   │   │   └── security.py     # Max 5MB file sizes & extensions validation
-│   │   ├── utils/
-│   │   │   └── helpers.py      # Theme color helpers
-│   │   └── main.py             # App initializer and CORS middleware
-│   ├── requirements.txt        # Backend dependencies
-│   └── .env                    # Local-only port, allowed origins, and GEMINI_API_KEY placeholder
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── Navigation.jsx  # Newspaper masthead & volume indicator
-│   │   │   ├── UploadZone.jsx  # Drag-and-drop document upload + paste text panels
-│   │   │   ├── Dashboard.jsx   # Main grid dashboard layout assembler
-│   │   │   ├── RiskHeader.jsx  # Safety badge status card
-│   │   │   ├── RiskHeatmap.jsx # Dynamic click-to-highlight keyword box
-│   │   │   ├── RiskList.jsx    # Collapsible AI clause translation cards
-│   │   │   ├── ScamSignals.jsx # Predatory patterns warning blocks
-│   │   │   ├── MissingClauses.jsx # Omission highlight tables & text inserts
-│   │   │   └── Simulations.jsx # Interactive exit and payment consequence trials
-│   │   ├── services/
-│   │   │   └── api.js          # Fetch API routes connector
-│   │   ├── App.jsx             # View and state controller
-│   │   ├── index.css           # Global custom editorial style classes
-│   │   └── main.jsx            # DOM entrypoint
-│   ├── package.json            # Node modules config
-│   ├── tailwind.config.js      # Tailwind configurations & custom theme color hex codes
-│   └── index.html              # Custom Google Fonts loading and metadata tags
-└── README.md                   # Setup guide
-```
+Other
 
----
+- Uses simple JSON files / in-memory stores for cache and small analytics in this repo.
 
-## Setup & Installation
+## Where to find important code (brief)
 
-### Prerequisite
+- Backend API routes: `backend/app/routes/analyze.py`
+- Parsers: `backend/app/parsers/pdf.py`, `backend/app/parsers/docx.py`, `backend/app/parsers/txt.py`
+- Gemini integration: `backend/app/services/gemini_service.py`
+- Risk engine & helpers: `backend/app/services` and `backend/app/utils`
+- Frontend app: `frontend/src/App.jsx`
+- Upload component: `frontend/src/components/UploadZone.jsx`
+- Dashboard and visualization components: `frontend/src/components/*`
+- Frontend API client: `frontend/src/services/api.js`
 
-Obtain a Gemini API key from the [Google AI Studio](https://aistudio.google.com/).
+## How to run locally (copyable commands)
 
-### 1. Backend Server Setup
-
-Navigate into the backend directory:
+Backend (macOS / Linux):
 
 ```bash
 cd backend
-```
-
-Create a Python virtual environment:
-
-```bash
-# On macOS / Linux
-python3 -m venv venv
-source venv/bin/activate
-
-# On Windows
-python -m venv venv
-venv\Scripts\activate
-```
-
-Install dependencies:
-
-```bash
+# create venv if you don't have one
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
+# set environment variables (example)
+export PORT=8000
+export ALLOWED_ORIGINS=http://localhost:5173
+export GEMINI_API_KEY=your_gemini_api_key_here   # optional
+uvicorn app.main:app --reload --host 0.0.0.0 --port $PORT
 ```
 
-Configure your environment variables:
-Open the `.env` file in the `backend/` directory and paste your API key locally only:
-
-```env
-PORT=8000
-ALLOWED_ORIGINS=http://localhost:5173,https://your-netlify-site.netlify.app
-GEMINI_API_KEY=your_gemini_api_key_here
-```
-
-Start the FastAPI application:
-
-```bash
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-The server will start running on **`http://localhost:8000`**. You can verify the health check at `http://localhost:8000/` or access the interactive API docs at `http://localhost:8000/docs`.
-
-_(Note: If no API key is specified, Veritas Ledger will automatically enter **Offline Fallback Mode**, allowing you to test the complete drag-and-drop workflow and interactive dashboard using local deterministic keyword analysis!)_
-
----
-
-### 2. Frontend client Setup
-
-Open a new terminal window and navigate into the frontend directory:
+Frontend:
 
 ```bash
 cd frontend
-```
-
-Install dependencies:
-
-```bash
 npm install
-```
-
-Start the Vite development client:
-
-```bash
 npm run dev
 ```
 
-The dev client will open on **`http://localhost:5173`**. Access this link in your browser to interact with the platform.
+Open the frontend at `http://localhost:5173` and the backend at `http://localhost:8000`.
+
+## Tests / quick validation commands
+
+- Frontend build check: `cd frontend && npm run build`
+- Backend repo tests (simple harness): `cd backend && ../.venv/bin/python app/tests/run_tests.py`
+
+## Environment variables used by the project
+
+- `GEMINI_API_KEY` — (optional) API key for Gemini AI. When absent, the app uses keyword analysis only.
+- `PORT` — backend port (default 8000)
+- `ALLOWED_ORIGINS` — comma-separated list of allowed CORS origins for the frontend.
+
+## Deployment notes (short)
+
+- Backend: any container or Python host that can run `uvicorn app.main:app`. Keep `GEMINI_API_KEY` secret in deployment settings.
+- Frontend: static build (`npm run build`) outputs `dist` for hosting on Netlify, Vercel, or similar. Point `VITE_API_URL` to the deployed backend.
+
+## Simple troubleshooting
+
+- If uploads fail, check backend logs for MIME or size validation errors.
+- If the Gemini calls fail, ensure `GEMINI_API_KEY` is set and the key has sufficient quota.
+- To re-run the included backend unit checks use `backend/app/tests/run_tests.py` (no external test runner required).
 
 ---
 
-## Deployment Guidelines
-
-### Backend (Render)
-
-- Deploy from the repository root with the `backend` directory as the service root.
-- Use the start command `uvicorn app.main:app --host 0.0.0.0 --port $PORT`.
-- Add `GEMINI_API_KEY` and `ALLOWED_ORIGINS` as environment variables in Render.
-- Keep the API key out of the repo; only store it in Render secrets or your local `.env`.
-
-### Frontend (Netlify)
-
-- Set the base directory to `frontend`.
-- Use the build command `npm run build` and publish directory `dist`.
-- Set `VITE_API_URL` to your deployed Render backend URL.
-- You can keep `frontend/.env.example` as a local template and configure the real value in Netlify.
+If you want the README shortened, reformatted, or translated to another language, tell me which sections to keep and I will update only the `README.md`.

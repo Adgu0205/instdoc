@@ -1,7 +1,12 @@
 import React from 'react';
 import { Shield, ShieldAlert, ShieldCheck, Activity, Award } from 'lucide-react';
 
-export default function RiskHeader({ contractType, overallRisk, riskLevel, confidence, apiWarning }) {
+export default function RiskHeader({ contractType, overallRisk, riskLevel, confidence, apiWarning, risks = [] }) {
+  // calculate counts
+  const positiveCount = risks.filter(r => r.severity === 'SAFE').length;
+  const neutralCount = risks.filter(r => r.severity === 'NEUTRAL').length;
+  const riskCount = risks.filter(r => ['CRITICAL', 'HIGH', 'MEDIUM'].includes(r.severity)).length;
+
   // Determine styling based on risk level
   const getRiskStyles = (level) => {
     switch (level?.toUpperCase()) {
@@ -30,6 +35,7 @@ export default function RiskHeader({ contractType, overallRisk, riskLevel, confi
           icon: Shield
         };
       case 'RISKY':
+      case 'HIGH RISK':
         return {
           bg: 'bg-orange-50/80 border-orange-200',
           text: 'text-orange-900',
@@ -62,7 +68,7 @@ export default function RiskHeader({ contractType, overallRisk, riskLevel, confi
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
         {/* Document Classification */}
-        <div className="md:col-span-4 flex flex-col justify-center border-b md:border-b-0 md:border-r border-editorial-border pb-6 md:pb-0 md:pr-6">
+        <div className="md:col-span-3 flex flex-col justify-center border-b md:border-b-0 md:border-r border-editorial-border pb-6 md:pb-0 md:pr-6">
           <span className="text-[10px] uppercase tracking-widest text-stone-500 font-mono mb-1">
             Document Type
           </span>
@@ -75,7 +81,7 @@ export default function RiskHeader({ contractType, overallRisk, riskLevel, confi
         </div>
 
         {/* Safety Badge Callout */}
-        <div className="md:col-span-4 flex items-center gap-4 border-b md:border-b-0 md:border-r border-editorial-border pb-6 md:pb-0 md:px-6">
+        <div className="md:col-span-3 flex items-center gap-4 border-b md:border-b-0 md:border-r border-editorial-border pb-6 md:pb-0 md:px-6">
           <div className={`p-4 border rounded-none ${styles.bg} flex items-center justify-center`}>
             <Icon className={`w-8 h-8 ${styles.text}`} />
           </div>
@@ -87,13 +93,43 @@ export default function RiskHeader({ contractType, overallRisk, riskLevel, confi
               {riskLevel}
             </div>
             <p className="text-xs text-stone-500 mt-0.5">
-              Subject to negotiation thresholds.
+              Negotiation threshold.
             </p>
           </div>
         </div>
 
+        {/* Clause Balance Analysis Column */}
+        <div className="md:col-span-3 flex flex-col justify-center border-b md:border-b-0 md:border-r border-editorial-border pb-6 md:pb-0 md:px-6">
+          <span className="text-[10px] uppercase tracking-widest text-stone-500 font-mono mb-2">
+            Clause Balance
+          </span>
+          <div className="space-y-1 text-xs">
+            <div className="flex justify-between items-center">
+              <span className="text-editorial-green font-serif font-semibold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-editorial-green animate-pulse"></span>
+                Protections (Safe)
+              </span>
+              <span className="font-mono font-bold text-editorial-green bg-emerald-50/50 px-2 py-0.5 border border-editorial-border-light">{positiveCount}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-stone-600 font-serif flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-stone-400"></span>
+                Neutral Terms
+              </span>
+              <span className="font-mono font-bold text-stone-600 bg-stone-50 px-2 py-0.5 border border-editorial-border-light">{neutralCount}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-editorial-red font-serif font-semibold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-editorial-red"></span>
+                Identified Risks
+              </span>
+              <span className="font-mono font-bold text-editorial-red bg-red-50/50 px-2 py-0.5 border border-editorial-border-light">{riskCount}</span>
+            </div>
+          </div>
+        </div>
+
         {/* Numeric Indexes */}
-        <div className="md:col-span-4 grid grid-cols-2 gap-4 items-center pl-0 md:pl-6">
+        <div className="md:col-span-3 grid grid-cols-2 gap-4 items-center pl-0 md:pl-6">
           {/* Risk Index */}
           <div className="text-left">
             <span className="text-[10px] uppercase tracking-widest text-stone-500 font-mono flex items-center gap-1">

@@ -31,7 +31,7 @@ export default function ScamSignals({ signals = [] }) {
         {signals.map((sig, index) => (
           <div 
             key={index}
-            className="border-l-4 border-editorial-red bg-red-50/30 p-4 border border-y-stone-200 border-r-stone-200"
+            className="border-l-4 border-editorial-red bg-red-50/30 p-4 border border-y-stone-200 border-r-stone-200 premium-hover"
           >
             <div className="flex justify-between items-center mb-1.5">
               <h4 className="font-serif font-bold text-sm text-red-950">

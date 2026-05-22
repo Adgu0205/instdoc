@@ -59,6 +59,31 @@
   background-size: 100% 1px;
 }
 
+.premium-hover {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.premium-hover:hover {
+  border-color: var(--color-charcoal) !important;
+  background-color: var(--color-paper) !important;
+  transform: translateY(-1px);
+}
+
+.newspaper-divider-r {
+  border-right: 1px solid var(--color-editorial-border);
+}
+
+.drop-cap::first-letter {
+  font-family: var(--font-serif);
+  font-size: 3.5rem;
+  font-weight: 900;
+  float: left;
+  margin-right: 0.5rem;
+  margin-top: -0.2rem;
+  line-height: 1;
+  color: var(--color-editorial-gold);
+}
+
 /* Premium typography line-heights and spacing for newspaper */
 .newspaper-lead {
   font-family: 'Lora', Georgia, serif;
